@@ -1,4 +1,4 @@
-[![testsnap](https://github.com/user-attachments/assets/e9a23ba9-d394-4711-abfc-994932605d86)](https://github.com/Bichuntea/SOCD_Bridge/releases)
+
 
 **关于 SOCD_Bridge** 
 --------------------------------------------------------------------------------------------------
@@ -13,7 +13,6 @@ SOCD_Bridge 是一款轻量级的开源工具，在系统托盘中运行，旨�
 </p>
 
 
-[![latesver](https://github.com/user-attachments/assets/09694f7c-6eeb-4c80-9a02-1d777956d181)](https://github.com/Bichuntea/SOCD_Bridge/wiki/Updates)
 
 **SOCD_Bridge 功能特性**
 --------------------------------------------------------------------------------------------------
@@ -55,8 +54,6 @@ SOCD_Bridge 是一款轻量级的开源工具，在系统托盘中运行，旨�
 
 - 当按下新的按键 (A/D) 和 (W/S) 时，自动释放之前按住的按键。
 
-<img src="https://github.com/user-attachments/assets/4453aba4-b9bc-45e8-8a80-80caad39347b" width="600" height="338" alt="STRAFE">
-
 - **[重新绑定按键](https://github.com/Bichuntea/SOCD_Bridge/wiki/Rebinding-Keys)**  
   如何重新绑定按键的说明
 
@@ -67,6 +64,6 @@ SOCD_Bridge 是一款轻量级的开源工具，在系统托盘中运行，旨�
 </p>
 
 <p align="center">
-  <a href="https://github.com/Bichuntea/SnapKey">SapKey</a> 
+  <a href="https://github.com/cafali/SnapKey">SnapKey</a> 
 </p>
 
