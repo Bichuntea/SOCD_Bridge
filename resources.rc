@@ -1,0 +1,34 @@
+#include <windows.h>
+
+// 图标
+MAIN_ICON ICON "socd_bridge.ico"
+
+// 版本信息
+1 VERSIONINFO
+FILEVERSION 1, 0, 0, 0
+PRODUCTVERSION 1, 0, 0, 0
+FILEFLAGSMASK 0x3fL
+FILEFLAGS 0x0L
+FILEOS VOS_NT_WINDOWS32
+FILETYPE VFT_APP
+FILESUBTYPE VFT2_UNKNOWN
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "080404b0"
+        BEGIN
+            VALUE "CompanyName", "Bichuntea"
+            VALUE "FileDescription", "SOCD Bridge"
+            VALUE "FileVersion", "1.0.0.0"
+            VALUE "InternalName", "SOCD_Bridge"
+            VALUE "LegalCopyright", "Copyright (c) 2026 Bichuntea"
+            VALUE "OriginalFilename", "SOCD_Bridge.exe"
+            VALUE "ProductName", "SOCD Bridge"
+            VALUE "ProductVersion", "1.0.0.0"
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x0804, 1200
+    END
+END
