@@ -1,4 +1,4 @@
-[![testsnap](https://github.com/Bichuntea/SOCD_Bridge/blob/main/socd_bridge_banner.png?raw=true)](https://github.com/Bichuntea/SOCD_Bridge/releases)
+[![testsnap](https://github.com/Bichuntea/SOCD_Bridge/blob/main/image/socd_bridge_banner.png?raw=true)](https://github.com/Bichuntea/SOCD_Bridge/releases)
 
 **关于 SOCD_Bridge** 
 --------------------------------------------------------------------------------------------------
