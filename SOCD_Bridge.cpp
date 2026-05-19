@@ -22,7 +22,6 @@ namespace fs = std::filesystem;
 #define ID_TRAY_RESTART_SOCD_BRIDGE     3004
 #define ID_TRAY_HELP                    3005
 #define ID_TRAY_LAYOUTS                 3007
-#define ID_TRAY_AUTOSTART               3008
 #define WM_TRAYICON                     (WM_USER + 1)
 #define ID_LAYOUT_BASE                  4000
 
@@ -55,8 +54,6 @@ void CreateDefaultConfig(const std::string& filename);
 void RestoreConfigFromBackup(const std::string& backupFilename, const std::string& destinationFilename);
 std::string GetVersionInfo();
 void SendKey(int target, bool keyDown);
-bool IsAutoStartEnabled();
-void SetAutoStart(bool enable);
 
 // 通过右键菜单选择布局
 vector<string> ListLayouts() {
@@ -266,7 +263,6 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 
             AppendMenu(hMenu, MF_STRING, ID_TRAY_RESTART_SOCD_BRIDGE, TEXT("重启 SOCD_Bridge"));
             AppendMenu(hMenu, MF_STRING, ID_TRAY_LOCK_FUNCTION, isLocked ? TEXT("启用 SOCD_Bridge") : TEXT("禁用 SOCD_Bridge"));
-            AppendMenu(hMenu, MF_STRING, ID_TRAY_AUTOSTART, IsAutoStartEnabled() ? TEXT("[已启用] 开机自启动") : TEXT("[已禁用] 开机自启动"));
             AppendMenu(hMenu, MF_SEPARATOR, 0, NULL);
             AppendMenu(hMenu, MF_STRING, ID_TRAY_HELP, TEXT("获取帮助"));
             AppendMenu(hMenu, MF_STRING, ID_TRAY_VERSION_INFO, TEXT("版本信息 (1.0)"));
@@ -328,9 +324,6 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
                     }
                 }
                 break;
-            case ID_TRAY_AUTOSTART:
-                SetAutoStart(!IsAutoStartEnabled());
-                break;
             }
         }
         break;
@@ -349,38 +342,6 @@ std::string GetVersionInfo() {
     return "SOCD_Bridge v1.0\n"
            "代码仓库：github.com/Bichuntea/SOCD_Bridge\n"
            "许可证：MIT 许可证\n";
-}
-
-bool IsAutoStartEnabled() {
-    HKEY hKey;
-    if (RegOpenKeyEx(HKEY_CURRENT_USER, TEXT("Software\\Microsoft\\Windows\\CurrentVersion\\Run"), 0, KEY_READ, &hKey) != ERROR_SUCCESS) {
-        return false;
-    }
-    
-    TCHAR szPath[MAX_PATH];
-    DWORD dwSize = sizeof(szPath);
-    LONG result = RegQueryValueEx(hKey, TEXT("SOCD_Bridge"), NULL, NULL, (LPBYTE)szPath, &dwSize);
-    RegCloseKey(hKey);
-    
-    return (result == ERROR_SUCCESS);
-}
-
-void SetAutoStart(bool enable) {
-    HKEY hKey;
-    if (RegOpenKeyEx(HKEY_CURRENT_USER, TEXT("Software\\Microsoft\\Windows\\CurrentVersion\\Run"), 0, KEY_SET_VALUE, &hKey) != ERROR_SUCCESS) {
-        MessageBox(NULL, TEXT("无法访问注册表！"), TEXT("SOCD_Bridge 错误"), MB_ICONERROR | MB_OK);
-        return;
-    }
-    
-    if (enable) {
-        TCHAR szExePath[MAX_PATH];
-        GetModuleFileName(NULL, szExePath, MAX_PATH);
-        RegSetValueEx(hKey, TEXT("SOCD_Bridge"), 0, REG_SZ, (BYTE*)szExePath, (lstrlen(szExePath) + 1) * sizeof(TCHAR));
-    } else {
-        RegDeleteValue(hKey, TEXT("SOCD_Bridge"));
-    }
-    
-    RegCloseKey(hKey);
 }
 
 void RestoreConfigFromBackup(const std::string& backupFilename, const std::string& destinationFilename) {
