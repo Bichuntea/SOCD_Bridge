@@ -18,13 +18,15 @@ BEGIN
         BLOCK "080404b0"
         BEGIN
             VALUE "CompanyName", "Bichuntea"
-            VALUE "FileDescription", "SOCD Bridge"
+            VALUE "FileDescription", "SOCD Bridge - 按键映射工具"
             VALUE "FileVersion", "1.0.0.0"
             VALUE "InternalName", "SOCD_Bridge"
-            VALUE "LegalCopyright", "Copyright (c) 2026 Bichuntea"
+            VALUE "LegalCopyright", "Copyright (c) 2026 Bichuntea. All rights reserved."
+            VALUE "LegalTrademarks", ""
             VALUE "OriginalFilename", "SOCD_Bridge.exe"
             VALUE "ProductName", "SOCD Bridge"
             VALUE "ProductVersion", "1.0.0.0"
+            VALUE "Comments", "SOCD Bridge - 解决同方向按键冲突问题的工具"
         END
     END
     BLOCK "VarFileInfo"

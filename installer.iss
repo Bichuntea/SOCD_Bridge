@@ -1,4 +1,4 @@
-﻿﻿﻿﻿; SOCD_Bridge Inno Setup 安装脚本1.0
+; SOCD_Bridge Inno Setup 安装脚本1.0
 ; 版权所有 (c) 2026 Bichuntea
 
 #define MyAppName "SOCD_Bridge"
@@ -6,6 +6,7 @@
 #define MyAppPublisher "Bichuntea"
 #define MyAppURL "https://github.com/Bichuntea/SOCD_Bridge"
 #define MyAppExeName "SOCD_Bridge.exe"
+#define MyAppCopyright "Copyright (c) 2026 Bichuntea"
 
 [Setup]
 AppId={{A1B2C3D4-E5F6-7890-ABCD-EF1234567890}
@@ -33,11 +34,13 @@ ArchitecturesInstallIn64BitMode=x64compatible
 DisableProgramGroupPage=yes
 VersionInfoVersion={#MyAppVersion}.0.0
 VersionInfoCompany={#MyAppPublisher}
-VersionInfoDescription={#MyAppName} 安装程序
-VersionInfoCopyright=Copyright (c) 2026 {#MyAppPublisher}
+VersionInfoDescription={#MyAppName} - 解决同方向按键冲突问题的工具
+VersionInfoCopyright={#MyAppCopyright}
 VersionInfoProductName={#MyAppName}
 VersionInfoProductVersion={#MyAppVersion}.0.0
 WizardSizePercent=100
+UninstallDisplayName={#MyAppName} - {#MyAppPublisher}
+AppCopyright={#MyAppCopyright}
 
 [Languages]
 Name: "chinesesimplified"; MessagesFile: "compiler:Languages\ChineseSimplified.isl"
