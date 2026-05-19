@@ -1,4 +1,4 @@
-﻿﻿﻿﻿; SOCD_Bridge Inno Setup 安装脚本
+﻿﻿﻿﻿; SOCD_Bridge Inno Setup 安装脚本1.0
 ; 版权所有 (c) 2026 Bichuntea
 
 #define MyAppName "SOCD_Bridge"
