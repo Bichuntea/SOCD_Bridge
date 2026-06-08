@@ -85,7 +85,7 @@ namespace fs = std::filesystem;
 
 /** @name 延迟设置参数范围 */
 /** @{ */
-#define DEFAULT_DELAY_MS                20      /**< 默认延迟时间(ms) */
+#define DEFAULT_DELAY_MS                40      /**< 默认延迟时间(ms) */
 #define DEFAULT_FLOAT_RANGE_MS          20      /**< 默认浮动范围(ms) */
 #define MIN_DELAY_MS                    8       /**< 最小延迟时间(ms) */
 #define MAX_DELAY_MS                    200     /**< 最大延迟时间(ms) */
@@ -199,7 +199,12 @@ int GetRandomDelay();
 /** @{ */
 string GetVersionInfo();
 void OpenGitHubPage();
-void IntToAnsiWithUnit(int value, char* buffer, int bufferSize, const char* unit = " ms");
+/** @} */
+
+/** @name 配置文件管理函数 */
+/** @{ */
+void LoadDelayConfig();
+void SaveDelayConfig();
 /** @} */
 
 /** @name 对话框函数 */
@@ -298,6 +303,9 @@ int main() {
     if (!LoadConfig("config.cfg")) {
         return 1;
     }
+    
+    // 加载延迟配置
+    LoadDelayConfig();
 
     // 创建互斥量，防止重复运行
     g_hMutex = CreateMutex(NULL, TRUE, TEXT("SOCDBridgeMutex"));
@@ -364,6 +372,9 @@ int main() {
         TranslateMessage(&msg);
         DispatchMessage(&msg);
     }
+
+    // 保存延迟配置
+    SaveDelayConfig();
 
     // 清理资源
     UnhookWindowsHookEx(g_hHook);
@@ -727,6 +738,71 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
  * ========================================================================= */
 
 /**
+ * @brief 延迟配置文件路径
+ */
+static const char* DELAY_CONFIG_FILE = "delay.cfg";
+
+/**
+ * @brief 加载延迟配置文件
+ * @note 从 delay.cfg 文件中读取延迟设置参数
+ * @details 配置文件格式：
+ *          enabled=0 或 1
+ *          delay=40
+ *          float_range=20
+ */
+void LoadDelayConfig() {
+    ifstream configFile(DELAY_CONFIG_FILE);
+    if (!configFile.is_open()) {
+        // 配置文件不存在，使用默认值
+        return;
+    }
+
+    string line;
+    while (getline(configFile, line)) {
+        istringstream iss(line);
+        string key;
+        int value;
+
+        if (getline(iss, key, '=') && (iss >> value)) {
+            if (key == "enabled") {
+                g_delaySettings.enabled = (value != 0);
+            } else if (key == "delay") {
+                g_delaySettings.delayMs = value;
+                if (g_delaySettings.delayMs < MIN_DELAY_MS) {
+                    g_delaySettings.delayMs = MIN_DELAY_MS;
+                }
+                if (g_delaySettings.delayMs > MAX_DELAY_MS) {
+                    g_delaySettings.delayMs = MAX_DELAY_MS;
+                }
+            } else if (key == "float_range") {
+                g_delaySettings.floatRangeMs = value;
+                if (g_delaySettings.floatRangeMs < MIN_FLOAT_RANGE_MS) {
+                    g_delaySettings.floatRangeMs = MIN_FLOAT_RANGE_MS;
+                }
+                if (g_delaySettings.floatRangeMs > MAX_FLOAT_RANGE_MS) {
+                    g_delaySettings.floatRangeMs = MAX_FLOAT_RANGE_MS;
+                }
+            }
+        }
+    }
+}
+
+/**
+ * @brief 保存延迟配置文件
+ * @note 将当前延迟设置参数保存到 delay.cfg 文件
+ */
+void SaveDelayConfig() {
+    ofstream configFile(DELAY_CONFIG_FILE);
+    if (!configFile.is_open()) {
+        return;
+    }
+
+    configFile << "enabled=" << (g_delaySettings.enabled ? 1 : 0) << endl;
+    configFile << "delay=" << g_delaySettings.delayMs << endl;
+    configFile << "float_range=" << g_delaySettings.floatRangeMs << endl;
+}
+
+/**
  * @brief 获取版本信息字符串
  * @return 版本信息字符串
  */
@@ -973,18 +1049,6 @@ bool LoadConfig(const string& filename) {
  *                          函数实现 - 工具函数
  * ========================================================================= */
 
-/**
- * @brief 将整数转换为带单位的字符串
- * @param[in] value 整数值
- * @param[out] buffer 输出缓冲区
- * @param[in] bufferSize 缓冲区大小
- * @param[in] unit 单位字符串，默认为 " ms"
- * @note 用于ANSI版本API的字符串格式化
- */
-void IntToAnsiWithUnit(int value, char* buffer, int bufferSize, const char* unit) {
-    sprintf_s(buffer, bufferSize, "%d%s", value, unit);
-}
-
 /* =========================================================================
  *                          函数实现 - 延迟设置对话框
  * ========================================================================= */
@@ -1059,16 +1123,13 @@ LRESULT CALLBACK DelayDialogProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lPar
         SendMessage(hEditDelay, WM_SETFONT, reinterpret_cast<WPARAM>(hFont), TRUE);
         SetWindowTextA(hEditDelay, delayStr);
 
-        // 延迟时间当前值显示
-        char delayValueStr[32];
-        IntToAnsiWithUnit(g_delaySettings.delayMs, delayValueStr, sizeof(delayValueStr));
-        hLabelDelayValue = CreateWindow(TEXT("STATIC"), TEXT(""),
+        // 延迟时间单位显示
+        hLabelDelayValue = CreateWindow(TEXT("STATIC"), TEXT("ms"),
             WS_CHILD | WS_VISIBLE,
-            285, 88, 50, 20, hwnd,
+            285, 88, 30, 20, hwnd,
             reinterpret_cast<HMENU>(static_cast<INT_PTR>(ID_DELAY_LABEL_DELAY_VALUE)),
             NULL, NULL);
         SendMessage(hLabelDelayValue, WM_SETFONT, reinterpret_cast<WPARAM>(hFont), TRUE);
-        SetWindowTextA(hLabelDelayValue, delayValueStr);
         
         // 延迟时间确定按钮
         HWND hBtnConfirmDelay = CreateWindow(TEXT("BUTTON"), TEXT("确定"),
@@ -1105,16 +1166,13 @@ LRESULT CALLBACK DelayDialogProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lPar
         SendMessage(hEditFloat, WM_SETFONT, reinterpret_cast<WPARAM>(hFont), TRUE);
         SetWindowTextA(hEditFloat, floatStr);
 
-        // 浮动范围当前值显示
-        char floatValueStr[32];
-        IntToAnsiWithUnit(g_delaySettings.floatRangeMs, floatValueStr, sizeof(floatValueStr));
-        hLabelFloatValue = CreateWindow(TEXT("STATIC"), TEXT(""),
+        // 浮动范围单位显示
+        hLabelFloatValue = CreateWindow(TEXT("STATIC"), TEXT("ms"),
             WS_CHILD | WS_VISIBLE,
-            285, 153, 50, 20, hwnd,
+            285, 153, 30, 20, hwnd,
             reinterpret_cast<HMENU>(static_cast<INT_PTR>(ID_DELAY_LABEL_FLOAT_VALUE)),
             NULL, NULL);
         SendMessage(hLabelFloatValue, WM_SETFONT, reinterpret_cast<WPARAM>(hFont), TRUE);
-        SetWindowTextA(hLabelFloatValue, floatValueStr);
         
         // 浮动范围确定按钮
         HWND hBtnConfirmFloat = CreateWindow(TEXT("BUTTON"), TEXT("确定"),
@@ -1182,24 +1240,20 @@ LRESULT CALLBACK DelayDialogProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lPar
             int pos = static_cast<int>(SendMessage(hSliderDelay, TBM_GETPOS, 0, 0));
             g_delaySettings.delayMs = pos;
             
-            char posStr[16], posValueStr[32];
+            char posStr[16];
             sprintf_s(posStr, sizeof(posStr), "%d", pos);
-            IntToAnsiWithUnit(pos, posValueStr, sizeof(posValueStr));
             
             SetWindowTextA(hEditDelay, posStr);
-            SetWindowTextA(hLabelDelayValue, posValueStr);
         } 
         else if (hSlider == hSliderFloat) {
             // 浮动范围滑块变化
             int pos = static_cast<int>(SendMessage(hSliderFloat, TBM_GETPOS, 0, 0));
             g_delaySettings.floatRangeMs = pos;
             
-            char posStr[16], posValueStr[32];
+            char posStr[16];
             sprintf_s(posStr, sizeof(posStr), "%d", pos);
-            IntToAnsiWithUnit(pos, posValueStr, sizeof(posValueStr));
             
             SetWindowTextA(hEditFloat, posStr);
-            SetWindowTextA(hLabelFloatValue, posValueStr);
         }
         break;
     }
@@ -1232,6 +1286,9 @@ LRESULT CALLBACK DelayDialogProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lPar
             // 读取启用状态
             g_delaySettings.enabled = (SendMessage(hCheckboxEnable, BM_GETCHECK, 0, 0) == BST_CHECKED);
             
+            // 保存配置到文件
+            SaveDelayConfig();
+            
             DestroyWindow(hwnd);
             g_hDelayDialog = NULL;
         } 
@@ -1250,13 +1307,6 @@ LRESULT CALLBACK DelayDialogProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lPar
             sprintf_s(floatStr, sizeof(floatStr), "%d", g_delaySettings.floatRangeMs);
             SetWindowTextA(hEditDelay, delayStr);
             SetWindowTextA(hEditFloat, floatStr);
-            
-            // 更新显示值
-            char delayValueStr[32], floatValueStr[32];
-            IntToAnsiWithUnit(g_delaySettings.delayMs, delayValueStr, sizeof(delayValueStr));
-            IntToAnsiWithUnit(g_delaySettings.floatRangeMs, floatValueStr, sizeof(floatValueStr));
-            SetWindowTextA(hLabelDelayValue, delayValueStr);
-            SetWindowTextA(hLabelFloatValue, floatValueStr);
         } 
         else if (id == ID_DELAY_BUTTON_CONFIRM_DELAY) {
             /* 延迟时间确定按钮 - 仅确认延迟时间 */
@@ -1291,10 +1341,7 @@ LRESULT CALLBACK DelayDialogProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lPar
             GetWindowTextA(hEditDelay, buffer, sizeof(buffer));
             int val = atoi(buffer);
             if (val >= MIN_DELAY_MS && val <= MAX_DELAY_MS) {
-                char valStr[32];
-                IntToAnsiWithUnit(val, valStr, sizeof(valStr));
                 SendMessage(hSliderDelay, TBM_SETPOS, TRUE, val);
-                SetWindowTextA(hLabelDelayValue, valStr);
             }
         } 
         else if (id == ID_DELAY_EDIT_FLOAT && code == EN_CHANGE) {
@@ -1303,10 +1350,7 @@ LRESULT CALLBACK DelayDialogProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lPar
             GetWindowTextA(hEditFloat, buffer, sizeof(buffer));
             int val = atoi(buffer);
             if (val >= MIN_FLOAT_RANGE_MS && val <= MAX_FLOAT_RANGE_MS) {
-                char valStr[32];
-                IntToAnsiWithUnit(val, valStr, sizeof(valStr));
                 SendMessage(hSliderFloat, TBM_SETPOS, TRUE, val);
-                SetWindowTextA(hLabelFloatValue, valStr);
             }
         }
         break;
