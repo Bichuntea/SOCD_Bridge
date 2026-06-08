@@ -5,8 +5,8 @@ MAIN_ICON ICON "socd_bridge.ico"
 
 // 版本信息
 1 VERSIONINFO
-FILEVERSION 1, 0, 0, 0
-PRODUCTVERSION 1, 0, 0, 0
+FILEVERSION 1, 1, 0, 0
+PRODUCTVERSION 1, 1, 0, 0
 FILEFLAGSMASK 0x3fL
 FILEFLAGS 0x0L
 FILEOS VOS_NT_WINDOWS32
@@ -19,13 +19,13 @@ BEGIN
         BEGIN
             VALUE "CompanyName", "Bichuntea"
             VALUE "FileDescription", "SOCD Bridge - 按键映射工具"
-            VALUE "FileVersion", "1.0.0.0"
+            VALUE "FileVersion", "1.1.0.0"
             VALUE "InternalName", "SOCD_Bridge"
             VALUE "LegalCopyright", "Copyright (c) 2026 Bichuntea. All rights reserved."
             VALUE "LegalTrademarks", ""
             VALUE "OriginalFilename", "SOCD_Bridge.exe"
             VALUE "ProductName", "SOCD Bridge"
-            VALUE "ProductVersion", "1.0.0.0"
+            VALUE "ProductVersion", "1.1.0.0"
             VALUE "Comments", "SOCD Bridge - 解决同方向按键冲突问题的工具"
         END
     END

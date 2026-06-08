@@ -1,8 +1,8 @@
-; SOCD_Bridge Inno Setup 安装脚本1.0
+; SOCD_Bridge Inno Setup 安装脚本1.1
 ; 版权所有 (c) 2026 Bichuntea
 
 #define MyAppName "SOCD_Bridge"
-#define MyAppVersion "1.0"
+#define MyAppVersion "1.1"
 #define MyAppPublisher "Bichuntea"
 #define MyAppURL "https://github.com/Bichuntea/SOCD_Bridge"
 #define MyAppExeName "SOCD_Bridge.exe"
@@ -57,7 +57,6 @@ Source: "icon_off.ico"; DestDir: "{app}"; Flags: ignoreversion
 Source: "socd_bridge.ico"; DestDir: "{app}"; Flags: ignoreversion
 Source: "{#MyAppExeName}.manifest"; DestDir: "{app}"; Flags: ignoreversion
 Source: "meta\*"; DestDir: "{app}\meta"; Flags: ignoreversion recursesubdirs createallsubdirs
-Source: "README.md"; DestDir: "{app}"; Flags: ignoreversion isreadme
 Source: "LICENSE"; DestDir: "{app}"; Flags: ignoreversion
 
 [Dirs]
@@ -76,6 +75,7 @@ Root: HKCU; Subkey: "Software\{#MyAppName}"; ValueType: string; ValueName: "Vers
 
 [Run]
 Filename: "{app}\{#MyAppExeName}"; Description: "启动 SOCD_Bridge"; Flags: nowait postinstall skipifsilent runascurrentuser
+Filename: "{#MyAppURL}"; Description: "访问 GitHub 项目主页"; Flags: nowait postinstall skipifsilent shellexec
 
 [UninstallRun]
 Filename: "{sys}\taskkill.exe"; Parameters: "/F /IM {#MyAppExeName}"; Flags: runhidden
