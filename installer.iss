@@ -74,7 +74,7 @@ Root: HKCU; Subkey: "Software\{#MyAppName}"; ValueType: string; ValueName: "Inst
 Root: HKCU; Subkey: "Software\{#MyAppName}"; ValueType: string; ValueName: "Version"; ValueData: "{#MyAppVersion}"; Flags: uninsdeletekey
 
 [Run]
-Filename: "{app}\{#MyAppExeName}"; Description: "启动 SOCD_Bridge"; Flags: nowait postinstall skipifsilent
+Filename: "{app}\{#MyAppExeName}"; Description: "启动 SOCD_Bridge"; Flags: nowait postinstall skipifsilent shellexec runasoriginaluser
 Filename: "{#MyAppURL}"; Description: "访问 GitHub 项目主页"; Flags: nowait postinstall skipifsilent shellexec
 
 [UninstallRun]
@@ -83,6 +83,8 @@ Filename: "{sys}\taskkill.exe"; Parameters: "/F /IM {#MyAppExeName}"; Flags: run
 [UninstallDelete]
 Type: filesandordirs; Name: "{app}\meta"
 Type: files; Name: "{app}\config.cfg"
+Type: files; Name: "{app}\delay.cfg"
+Type: dirifempty; Name: "{app}"
 
 [Code]
 function InitializeSetup(): Boolean;
