@@ -13,7 +13,7 @@
             "label": "编译主程序",
             "type": "shell",
             "command": "g++",
-            "args": ["-o", "SOCD_Bridge.exe", "SOCD_Bridge.cpp", "resources.o", "-lshell32", "-lgdi32", "-mwindows", "-static", "-O2", "-finput-charset=UTF-8", "-fexec-charset=GBK"],
+            "args": ["-o", "SOCD_Bridge.exe", "SOCD_Bridge.cpp", "resources.o", "-lshell32", "-lgdi32", "-lcomctl32", "-mwindows", "-static-libgcc", "-static-libstdc++", "-O2", "-finput-charset=UTF-8", "-fexec-charset=GBK"],
             "group": "build",
             "dependsOn": "编译资源文件",
             "problemMatcher": ["$gcc"]
@@ -29,5 +29,3 @@
         }
     ]
 }
-
-
