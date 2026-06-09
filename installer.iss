@@ -74,7 +74,7 @@ Root: HKCU; Subkey: "Software\{#MyAppName}"; ValueType: string; ValueName: "Inst
 Root: HKCU; Subkey: "Software\{#MyAppName}"; ValueType: string; ValueName: "Version"; ValueData: "{#MyAppVersion}"; Flags: uninsdeletekey
 
 [Run]
-Filename: "{app}\{#MyAppExeName}"; Description: "启动 SOCD_Bridge"; Flags: nowait postinstall skipifsilent runasoriginaluser
+Filename: "{app}\{#MyAppExeName}"; Description: "启动 SOCD_Bridge"; Flags: nowait postinstall skipifsilent
 Filename: "{#MyAppURL}"; Description: "访问 GitHub 项目主页"; Flags: nowait postinstall skipifsilent shellexec
 
 [UninstallRun]
